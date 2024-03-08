@@ -32,4 +32,22 @@ userRouter.post("/login", loginValidation, async (req, res, next) => {
   }
 });
 
+userRouter.post("/generateOtp", async (req, res, next) => {
+  try {
+    const result = await userController.sendOtp(req.body);
+    res.status(200).json({ message: result });
+  } catch (error) {
+    next(error);
+  }
+});
+
+userRouter.post("/verifyOtp", async (req, res, next) => {
+  try {
+    const result = await userController.verifyOtpCode(req.body);
+    res.status(200).json({ message: result });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = userRouter;

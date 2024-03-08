@@ -1,7 +1,7 @@
 const UserModel = require("./user.model");
 const { hashPassword, comparePass } = require("../../utils/bcrypt");
 const { mail } = require("../../services/mail");
-const { generateToken } = require("../../utils/token");
+const { generateToken, generateOtp } = require("../../utils/token");
 
 const registerUser = async (payload) => {
   const { password, email } = payload;
@@ -90,7 +90,35 @@ const login = async (payload) => {
   };
   const token = await generateToken(tokenPayload);
   return token;
-  
 };
 
-module.exports = { registerUser, getUsers, login };
+const sendOtp = async (payload) => {
+  const { email } = payload;
+  if (!email) throw new Error("please enter email");
+  const user = await UserModel.findOne({ email });
+
+  console.log(user);
+  if (!user) throw new Error("user not found");
+  const otp = await generateOtp();
+  const mailer = await mail(email, "Otp Code", `Your otp code is : ${otp}`);
+  if (!mailer) throw new Error("failed to send mail");
+  await UserModel.updateOne({ email }, { otp: otp });
+  return "mail sent";
+};
+
+const verifyOtpCode = async (payload) => {
+  const { email, otp, newPassword } = payload;
+  if (!email && !otp && !newPassword) throw new Error("something is missing");
+  const user = await UserModel.findOne({ email });
+  if (!user) throw new Error("user Not found");
+  const { otp: userOtp } = user;
+  if (userOtp !== otp) throw new Error("invalid otp code");
+  const hashPass = await hashPassword(newPassword);
+  const updateUser = await UserModel.updateOne(
+    { email },
+    { password: hashPass, otp: "" }
+  );
+  return "password changed successfully";
+};
+
+module.exports = { registerUser, getUsers, login, sendOtp, verifyOtpCode };

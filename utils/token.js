@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 
 const generateToken = (payload) => {
   return jwt.sign(payload, process.env.SECRETE, {
@@ -10,4 +11,8 @@ const verifyToken = async (token) => {
   return await jwt.verify(token, process.env.SECRETE);
 };
 
-module.exports = { generateToken, verifyToken };
+const generateOtp = () => {
+  return crypto.randomInt(100000, 999999);
+};
+
+module.exports = { generateToken, verifyToken, generateOtp };

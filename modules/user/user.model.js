@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
   },
   phoneNumber: { type: Number },
   roles: { type: [String], enum: ["user", "admin"], default: ["user"] },
+  otp: { type: Number },
 });
 
 const UserModel = new mongoose.model("users", userSchema);
