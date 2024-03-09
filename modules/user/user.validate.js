@@ -7,6 +7,7 @@ const schema = Joi.object({
     .email({ tlds: { allow: ["com"] } }),
   password: Joi.string().required(),
   roles: Joi.array().items(Joi.string().valid("user", "admin")),
+  profilePic: Joi.string(),
 });
 
 const loginSchema = Joi.object({

@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema({
     select: false,
   },
   phoneNumber: { type: Number },
+  profilePic: { type: String },
+
   roles: { type: [String], enum: ["user", "admin"], default: ["user"] },
   otp: { type: Number },
 });

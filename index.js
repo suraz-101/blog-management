@@ -15,6 +15,8 @@ mongoose.connect(process.env.DB).then(() => {
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
+
+app.use(express.static("/public"));
 app.use(`/${apiVersion}`, router);
 
 app.use((error, req, res, next) => {
