@@ -126,7 +126,7 @@ const getUserDetails = async (email) => {
   const user = await UserModel.aggregate([
     {
       $match: {
-        email: "surazpandey12@gmail.com",
+        email: email,
       },
     },
     {

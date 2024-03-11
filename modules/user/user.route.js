@@ -87,9 +87,9 @@ userRouter.put("/updateUser", async (req, res, next) => {
   }
 });
 
-userRouter.delete("/deleteUser", async (req, res, next) => {
+userRouter.delete("/deleteUser/:id", async (req, res, next) => {
   try {
-    const { id } = req.query;
+    const { id } = req.params;
 
     const result = await userController.DeleteUser(id);
     res.status(200).json({ message: result });
@@ -98,6 +98,14 @@ userRouter.delete("/deleteUser", async (req, res, next) => {
   }
 });
 
-userRouter.patch("/:id", (req, res, next) => {});
+userRouter.patch("/updateUserDetail/", async (req, res, next) => {
+  try {
+    const { id, ...rest } = req.params;
+    const result = await userController.updateUserDetails(id, rest);
+    res.status(200).json({ message: result });
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = userRouter;
