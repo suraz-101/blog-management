@@ -67,7 +67,7 @@ userRouter.post("/verifyOtp", async (req, res, next) => {
   }
 });
 
-userRouter.get("/:email", async (req, res, next) => {
+userRouter.get("/getUserDetail", async (req, res, next) => {
   try {
     const { email } = req.query;
     const result = await userController.getUserDetails(email);
@@ -77,9 +77,26 @@ userRouter.get("/:email", async (req, res, next) => {
   }
 });
 
-userRouter.put("/:id", (req, res, next) => {});
+userRouter.put("/updateUser", async (req, res, next) => {
+  try {
+    const { id, ...rest } = req.body;
+    const result = await userController.updateUserDetails(id, rest);
+    res.status(200).json({ message: result });
+  } catch (error) {
+    next(error);
+  }
+});
 
-userRouter.delete("/:id", (req, res, next) => {});
+userRouter.delete("/deleteUser", async (req, res, next) => {
+  try {
+    const { id } = req.query;
+
+    const result = await userController.DeleteUser(id);
+    res.status(200).json({ message: result });
+  } catch (error) {
+    next(error);
+  }
+});
 
 userRouter.patch("/:id", (req, res, next) => {});
 

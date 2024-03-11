@@ -143,7 +143,21 @@ const getUserDetails = async (email) => {
   return user;
 };
 
-const updateUserDetails = () => {};
+const updateUserDetails = async (_id, payload) => {
+  if (!_id) throw new Error("Id is mandatory");
+  const updateUser = await UserModel.updateOne({ _id }, payload);
+  if (!updateUser) throw new Error("failed to update user");
+  return "User Updated Successfully";
+};
+
+const DeleteUser = async (_id) => {
+  if (!_id) throw new Error("Id is mandatory");
+  const user = await UserModel.findOne({ _id });
+  if (!user) throw new Error("user not found");
+  const isDeleted = await UserModel.deleteOne({ _id });
+  if (!isDeleted) throw new Error("User deletion unsuccessfull");
+  return "User Deleted Successfully";
+};
 
 module.exports = {
   registerUser,
@@ -152,4 +166,6 @@ module.exports = {
   sendOtp,
   verifyOtpCode,
   getUserDetails,
+  updateUserDetails,
+  DeleteUser,
 };
