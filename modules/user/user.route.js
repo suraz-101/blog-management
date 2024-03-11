@@ -67,4 +67,20 @@ userRouter.post("/verifyOtp", async (req, res, next) => {
   }
 });
 
+userRouter.get("/:email", async (req, res, next) => {
+  try {
+    const { email } = req.query;
+    const result = await userController.getUserDetails(email);
+    res.status(200).json({ message: result });
+  } catch (error) {
+    next(error);
+  }
+});
+
+userRouter.put("/:id", (req, res, next) => {});
+
+userRouter.delete("/:id", (req, res, next) => {});
+
+userRouter.patch("/:id", (req, res, next) => {});
+
 module.exports = userRouter;

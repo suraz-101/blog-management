@@ -121,4 +121,35 @@ const verifyOtpCode = async (payload) => {
   return "password changed successfully";
 };
 
-module.exports = { registerUser, getUsers, login, sendOtp, verifyOtpCode };
+const getUserDetails = async (email) => {
+  console.log(email);
+  const user = await UserModel.aggregate([
+    {
+      $match: {
+        email: "surazpandey12@gmail.com",
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        name: 1,
+        email: 1,
+      },
+    },
+  ]);
+
+  if (!user) throw new Error("User not found");
+
+  return user;
+};
+
+const updateUserDetails = () => {};
+
+module.exports = {
+  registerUser,
+  getUsers,
+  login,
+  sendOtp,
+  verifyOtpCode,
+  getUserDetails,
+};
