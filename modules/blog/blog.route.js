@@ -1,11 +1,49 @@
 const blogRouter = require("express").Router();
+const blogController = require("./blog.controller");
+const { validation } = require("./blog.validate");
+const { generateSlug } = require("../../utils/slugify");
+const multer = require("multer");
 
-blogRouter.get("/", (req, res, next) => {
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./public/blogs");
+  },
+  filename: function (req, file, cb) {
+    // const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
+
+blogRouter.get("/", async (req, res, next) => {
   try {
-    res.status(200).json({ message: "you are inside get method" });
+    const result = await blogController.getBlogs();
+    res.status(200).json({ message: result });
   } catch (error) {
     next(error);
   }
 });
+
+blogRouter.post(
+  "/",
+  upload.single("blogImage"),
+  validation,
+  async (req, res, next) => {
+    try {
+      const { title } = req.body;
+      const slug = await generateSlug(title);
+      if (req.file) {
+        const path = req.file.path.replace("public", "");
+        req.body.blogImage = path;
+      }
+      req.body.slug = slug;
+      const result = await blogController.createBlog(req.body);
+      res.status(200).json({ message: result });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 module.exports = blogRouter;
