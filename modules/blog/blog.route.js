@@ -48,4 +48,15 @@ blogRouter.post(
   }
 );
 
+blogRouter.get("/publishedBlogs", async (req, res, next) => {
+  try {
+    const { title, page, limit } = req.query;
+    const search = { title };
+    const result = await blogController.getPublishedBlog(search, page, limit);
+    res.status(200).json({ message: result });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = blogRouter;

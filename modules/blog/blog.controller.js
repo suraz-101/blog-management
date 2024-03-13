@@ -54,4 +54,58 @@ const createBlog = async (payload) => {
   return "Blog added successfully";
 };
 
-module.exports = { getBlogs, createBlog };
+const getPublishedBlog = async (search, page = 1, limit = 2) => {
+  const query = [];
+
+  query.push({
+    $match: {
+      status: "published",
+    },
+  });
+  if (search?.title) {
+    query.push({
+      $match: {
+        title: new RegExp(search.title, "gi"),
+      },
+    });
+  }
+
+  query.push(
+    {
+      $project: {
+        _id: 0,
+        title: 1,
+        content: 1,
+        slug: 1,
+        status: 1,
+        blogImage: 1,
+      },
+    },
+    {
+      $facet: {
+        metadata: [
+          {
+            $count: "total",
+          },
+        ],
+        data: [
+          {
+            $skip: (+page - 1) * +limit,
+          },
+          {
+            $limit: +limit,
+          },
+        ],
+      },
+    }
+  );
+  const result = await BlogModel.aggregate(query);
+  return {
+    data: result[0].data,
+    total: result[0].metadata[0].total,
+    page: +page,
+    limit: +limit,
+  };
+};
+
+module.exports = { getBlogs, createBlog, getPublishedBlog };
