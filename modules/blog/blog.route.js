@@ -18,7 +18,9 @@ const upload = multer({ storage: storage });
 
 blogRouter.get("/", async (req, res, next) => {
   try {
-    const result = await blogController.getBlogs();
+    const { title, page, limit } = req.query;
+    const search = { title };
+    const result = await blogController.getBlogs(search, page, limit);
     res.status(200).json({ message: result });
   } catch (error) {
     next(error);
