@@ -108,4 +108,23 @@ const getPublishedBlog = async (search, page = 1, limit = 2) => {
   };
 };
 
-module.exports = { getBlogs, createBlog, getPublishedBlog };
+const deleteBlog = async (_id) => {
+  return await BlogModel.deleteOne({ _id });
+};
+
+const updateBlogDetails = async (_id, payload) => {
+  if (!_id) throw new Error("id is mandatory. Please enter the Id");
+  const blog = await BlogModel.findOne({ _id });
+  if (!blog) throw new Error("Blog not found");
+  const isUpdate = await BlogModel.updateOne({ _id }, payload);
+  if (!isUpdate) throw new Error("failed to update blog details ");
+  return "Blog Updated Successfully";
+};
+
+module.exports = {
+  getBlogs,
+  createBlog,
+  getPublishedBlog,
+  deleteBlog,
+  updateBlogDetails,
+};

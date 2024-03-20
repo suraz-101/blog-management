@@ -2,6 +2,7 @@ const blogRouter = require("express").Router();
 const blogController = require("./blog.controller");
 const { validation } = require("./blog.validate");
 const { generateSlug } = require("../../utils/slugify");
+const { checkRole } = require("../../utils/sessionManager");
 const multer = require("multer");
 
 const storage = multer.diskStorage({
@@ -59,4 +60,27 @@ blogRouter.get("/publishedBlogs", async (req, res, next) => {
   }
 });
 
+blogRouter.delete("/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const result = await blogController.deleteBlog(id);
+    res.status(200).json({ message: result });
+  } catch (error) {
+    next(error);
+  }
+});
+
+blogRouter.put(
+  "/updateBlog",
+  upload.single("blogImage"),
+  async (req, res, next) => {
+    try {
+      const { id, ...rest } = req.body;
+      const result = await blogController.updateBlogDetails(id, rest);
+      res.status(200).json({ message: result });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 module.exports = blogRouter;
