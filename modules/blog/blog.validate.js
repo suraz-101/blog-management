@@ -5,6 +5,8 @@ const blogSchema = Joi.object({
   content: Joi.string().required(),
   blogImage: Joi.string(),
   status: Joi.string(),
+  category: Joi.string().required(),
+  author: Joi.string().required(),
 });
 
 const validation = (req, res, next) => {

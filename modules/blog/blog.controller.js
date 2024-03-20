@@ -1,4 +1,5 @@
 const BlogModel = require("./blog.model");
+const CategoryModel = require("../category /category.model");
 
 const getBlogs = async (search, page = 1, limit = 2) => {
   const query = [];
@@ -12,6 +13,20 @@ const getBlogs = async (search, page = 1, limit = 2) => {
 
   query.push(
     {
+      $lookup: {
+        from: "users",
+        localField: "author",
+        foreignField: "_id",
+        as: "blogAuthor",
+      },
+    },
+    {
+      $unwind: {
+        path: "$blogAuthor",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $project: {
         _id: 0,
         title: 1,
@@ -19,6 +34,8 @@ const getBlogs = async (search, page = 1, limit = 2) => {
         slug: 1,
         status: 1,
         blogImage: 1,
+        author: 0,
+        author: "$blogAuthor.name",
       },
     },
     {

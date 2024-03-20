@@ -31,6 +31,7 @@ blogRouter.get("/", async (req, res, next) => {
 blogRouter.post(
   "/",
   upload.single("blogImage"),
+  checkRole(["user"]),
   validation,
   async (req, res, next) => {
     try {
